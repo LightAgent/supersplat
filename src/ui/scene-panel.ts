@@ -126,7 +126,19 @@ class ScenePanel extends Container {
 
         const segmentationInputs: BooleanInput[] = [];
 
-        for (let i = 1; i <= 5; i++) {
+        const segmentationLabels = [
+            'Csf',
+            'Fat',
+            'Gli',
+            'Grey',
+            'Muscle + Skin',
+            'Mit',
+            'Skull',
+            'Skin',
+            'White'
+        ];
+
+        segmentationLabels.forEach((label, index) => {
             const row = new Container({
                 class: 'segmentation-option-row'
             });
@@ -135,26 +147,33 @@ class ScenePanel extends Container {
             segmentationInputs.push(input);
 
             input.on('change', (value: boolean) => {
-                switch (i) {
-                    case 1:
-                        // TODO: action for option 1
-                        console.log("1")
+                switch (label) {
+                    case 'Csf':
+                        console.log('Csf');
                         break;
-                    case 2:
-                        // TODO: action for option 2
-                        console.log("2")
+                    case 'Fat':
+                        console.log('Fat');
                         break;
-                    case 3:
-                        // TODO: action for option 3
-                        console.log("3")
+                    case 'Gli':
+                        console.log('Gli');
                         break;
-                    case 4:
-                        // TODO: action for option 4
-                        console.log("4")
+                    case 'Grey':
+                        console.log('Grey');
                         break;
-                    case 5:
-                        // TODO: action for option 5
-                        console.log("5")
+                    case 'Muscle + Skin':
+                        console.log('Muscle + Skin');
+                        break;
+                    case 'Mit':
+                        console.log('Mit');
+                        break;
+                    case 'Skull':
+                        console.log('Skull');
+                        break;
+                    case 'Skin':
+                        console.log('Skin');
+                        break;
+                    case 'White':
+                        console.log('White');
                         break;
                 }
             });
@@ -162,11 +181,11 @@ class ScenePanel extends Container {
             row.append(input);
 
             row.append(new Label({
-                text: `Option ${i}`
+                text: label
             }));
 
             segmentationOptions.append(row);
-        }
+        });
 
         this.append(segmentationOptions);
     }
