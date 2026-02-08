@@ -1,4 +1,4 @@
-import { Container, Element, Label } from '@playcanvas/pcui';
+import { BooleanInput, Container, Element, Label } from '@playcanvas/pcui';
 
 import { Events } from '../events';
 import { localize } from './localization';
@@ -118,6 +118,57 @@ class ScenePanel extends Container {
             height: 20
         }));
         this.append(segmentationHeader);
+
+        // segmentation choices 
+        const segmentationOptions = new Container({
+            class: 'segmentation-options'
+        });
+
+        const segmentationInputs: BooleanInput[] = [];
+
+        for (let i = 1; i <= 5; i++) {
+            const row = new Container({
+                class: 'segmentation-option-row'
+            });
+
+            const input = new BooleanInput();
+            segmentationInputs.push(input);
+
+            input.on('change', (value: boolean) => {
+                switch (i) {
+                    case 1:
+                        // TODO: action for option 1
+                        console.log("1")
+                        break;
+                    case 2:
+                        // TODO: action for option 2
+                        console.log("2")
+                        break;
+                    case 3:
+                        // TODO: action for option 3
+                        console.log("3")
+                        break;
+                    case 4:
+                        // TODO: action for option 4
+                        console.log("4")
+                        break;
+                    case 5:
+                        // TODO: action for option 5
+                        console.log("5")
+                        break;
+                }
+            });
+
+            row.append(input);
+
+            row.append(new Label({
+                text: `Option ${i}`
+            }));
+
+            segmentationOptions.append(row);
+        }
+
+        this.append(segmentationOptions);
     }
 }
 
