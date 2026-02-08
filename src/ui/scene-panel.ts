@@ -41,7 +41,7 @@ class ScenePanel extends Container {
             text: localize('panel.scene-manager'),
             class: 'panel-header-label'
         });
-
+        
         const sceneImport = new Container({
             class: 'panel-header-button'
         });
@@ -91,6 +91,23 @@ class ScenePanel extends Container {
 
         transformHeader.append(transformIcon);
         transformHeader.append(transformLabel);
+        
+        const segmentationHeader = new Container({
+            class: 'panel-header'
+        });
+
+        const segmentationIcon = new Label({
+            text: "\uE53B",
+            class: 'panel-header-icon'
+        });
+
+        const segmentationLabel = new Label({
+            text: "Segmentation",
+            class: 'panel-header-label'
+        });
+
+        segmentationHeader.append(segmentationIcon);
+        segmentationHeader.append(segmentationLabel);
 
         this.append(sceneHeader);
         this.append(splatListContainer);
@@ -100,6 +117,7 @@ class ScenePanel extends Container {
             class: 'panel-header',
             height: 20
         }));
+        this.append(segmentationHeader);
     }
 }
 
