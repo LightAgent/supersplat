@@ -92,6 +92,20 @@ class SelectAllOp extends StateOp {
     }
 }
 
+class SelectVisibleOp extends StateOp {
+    name = 'selectVisible';
+
+    constructor(splat: Splat) {
+        super(
+            splat,
+            state => (state & (State.locked | State.deleted)) === 0,
+            state => state | State.selected,
+            state => state & (~State.selected)
+        );
+    }
+}
+
+
 class SelectNoneOp extends StateOp {
     name = 'selectNone';
 
@@ -449,5 +463,6 @@ export {
     SetSplatColorAdjustmentOp,
     MultiOp,
     AddSplatOp,
-    SplatRenameOp
+    SplatRenameOp,
+    SelectVisibleOp
 };

@@ -2,7 +2,7 @@ import { MemoryFileSystem } from '@playcanvas/splat-transform';
 import { Color, Mat4, path, Texture, Vec3, Vec4 } from 'playcanvas';
 
 import { EditHistory } from './edit-history';
-import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp } from './edit-ops';
+import { SelectAllOp, SelectNoneOp, SelectInvertOp, SelectOp, HideSelectionOp, UnhideAllOp, DeleteSelectionOp, ResetOp, MultiOp, AddSplatOp, SelectVisibleOp } from './edit-ops';
 import { Element, ElementType } from './element';
 import { Events } from './events';
 import { MappedReadFileSystem } from './io';
@@ -213,6 +213,12 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
     events.on('select.all', () => {
         selectedSplats().forEach((splat) => {
             events.fire('edit.add', new SelectAllOp(splat));
+        });
+    });
+
+    events.on('select.visible', () => { //maro
+        selectedSplats().forEach((splat) => {
+            events.fire('edit.add', new SelectVisibleOp(splat));
         });
     });
 
