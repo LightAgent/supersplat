@@ -230,6 +230,7 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
 
     events.on('select.pred', (op, pred: (i: number) => boolean) => {
         selectedSplats().forEach((splat) => {
+            console.log("In selected pred number of selected splats: " + selectedSplats().length.toString());
             events.fire('edit.add', new SelectOp(splat, op, pred));
         });
     });
@@ -455,6 +456,31 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
             const withinThreshold = (value: number, ref: number) => Math.abs(value - ref) <= colorThreshold;
 
             // filter to select pixels within the color threshold
+            const filter = (i: number) => {
+                return withinThreshold(decodeColorChannel(reds[i]), reference[0]) &&
+                    withinThreshold(decodeColorChannel(greens[i]), reference[1]) &&
+                    withinThreshold(decodeColorChannel(blues[i]), reference[2]);
+            };
+
+            events.fire('edit.add', new SelectOp(splat, op, filter));
+        }
+    });
+
+    // select by explicit RGB value (each component 0-255)
+    events.on('select.byRgb', async (op: 'add'|'remove'|'set', rgb: number[], threshold = 0) => {
+        const splats = selectedSplats();
+        if (!splats.length || !rgb || rgb.length < 3) return;
+        const colorThreshold = Math.min(1, Math.max(0, Number.isFinite(threshold) ? threshold : 0));
+        const reference = [rgb[0] / 255, rgb[1] / 255, rgb[2] / 255];
+
+        for (const splat of splats) {
+            const reds = splat.splatData.getProp('f_dc_0') as Float32Array;
+            const greens = splat.splatData.getProp('f_dc_1') as Float32Array;
+            const blues = splat.splatData.getProp('f_dc_2') as Float32Array;
+            if (!reds || !greens || !blues) continue;
+
+            const withinThreshold = (value: number, ref: number) => Math.abs(value - ref) <= colorThreshold;
+
             const filter = (i: number) => {
                 return withinThreshold(decodeColorChannel(reds[i]), reference[0]) &&
                     withinThreshold(decodeColorChannel(greens[i]), reference[1]) &&
