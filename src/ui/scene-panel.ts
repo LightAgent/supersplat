@@ -121,8 +121,14 @@ class ScenePanel extends Container {
 
         // segmentation choices 
         const segmentationOptions = new Container({
-            class: 'segmentation-options'
+            class: 'segmentation-options',
+            flex: true,
+            flexDirection: 'column'
         });
+        
+        // Make the container scrollable
+        segmentationOptions.dom.style.maxHeight = '200px';
+        segmentationOptions.dom.style.overflowY = 'auto';
 
         const segmentationInputs: BooleanInput[] = [];
 
@@ -138,6 +144,18 @@ class ScenePanel extends Container {
             'White'
         ];
 
+        const segmentationColors: { [key: string]: [number, number, number] } = {
+            'Csf': [255, 255, 0],
+            'Fat': [0, 255, 255],
+            'Gli': [128, 0, 128],
+            'Grey': [128, 128, 128],
+            'Muscle + Skin': [255, 0, 255],
+            'Mit': [255, 128, 0],
+            'Skull': [255, 0, 0],
+            'Skin': [0, 128, 255],
+            'White': [0, 0, 255]
+        };
+
         segmentationLabels.forEach((label, index) => {
             const row = new Container({
                 class: 'segmentation-option-row'
@@ -147,47 +165,26 @@ class ScenePanel extends Container {
             segmentationInputs.push(input);
 
             input.on('change', (value: boolean) => {
-                switch (label) {
-                    case 'Csf':
-                        console.log('Csf');
-                        break;
-                    case 'Fat':
-                        console.log('Fat');
-                        break;
-                    case 'Gli':
-                        console.log('Gli');
-                        break;
-                    case 'Grey':
-                        console.log('Grey');
-                        break;
-                    case 'Muscle + Skin':
-                        console.log('Muscle + Skin');
-                        break;
-                    case 'Mit':
-                        console.log('Mit');
-                        break;
-                    case 'Skull':
-                        console.log('Skull');
-                        break;
-                    case 'Skin':
-                        console.log('Skin');
-                        break;
-                    case 'White':
-                        console.log('White');
-                        break;
+                const rgb = segmentationColors[label];
+                if (rgb) {
+                    events.fire('select.byRgb', value ? 'add' : 'remove', rgb, 0.5);
                 }
             });
 
             row.append(input);
 
             row.append(new Label({
-                text: label
+                text: label,
+                flex: true,
+                height: 30
             }));
 
             segmentationOptions.append(row);
         });
 
         this.append(segmentationOptions);
+
+        
     }
 }
 
