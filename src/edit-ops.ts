@@ -85,7 +85,7 @@ class SelectAllOp extends StateOp {
 
     constructor(splat: Splat) {
         super(splat,
-            state => state === 0,
+            state => state === 0, //un-selected
             state => state | State.selected,
             state => state & (~State.selected)
         );

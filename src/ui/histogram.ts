@@ -47,8 +47,8 @@ class HistogramData {
         for (let i = 0; i < count; i++) {
             const v = valueFunc(i);
             if (v !== undefined && isFinite(v)) {
-                const n = min === max ? 0 : (v - min) / (max - min);
-                const bin = Math.min(bins.length - 1, Math.floor(n * bins.length));
+                const n = min === max ? 0 : (v - min) / (max - min); // normalizes
+                const bin = Math.min(bins.length - 1, Math.floor(n * bins.length)); // getting bin number for v
                 if (selectedFunc(i)) {
                     bins[bin].selected++;
                 } else {
@@ -69,7 +69,7 @@ class HistogramData {
         return (this.maxValue - this.minValue) / this.bins.length;
     }
 
-    valueToBucket(value: number) {
+    valueToBucket(value: number) { //valuetobin
         const n = this.minValue === this.maxValue ? 0 : (value - this.minValue) / (this.maxValue - this.minValue);
         return Math.min(this.bins.length - 1, Math.floor(n * this.bins.length));
     }
@@ -203,7 +203,7 @@ class Histogram {
 
     update(options: UpdateOptions) {
         // update histogram data
-        this.histogram.calc(options.count, options.valueFunc, options.selectedFunc);
+        this.histogram.calc(options.count, options.valueFunc, options.selectedFunc); //filled the bins
 
         // draw histogram
         const canvas = this.canvas;

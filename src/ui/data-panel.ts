@@ -262,7 +262,7 @@ class DataPanel extends Panel {
                 histogram.update({
                     count: state.length,
                     valueFunc: i => ((state[i] === 0 || state[i] === State.selected) ? func(i) : undefined),
-                    selectedFunc: i => state[i] === State.selected,
+                    selectedFunc: i => state[i] === State.selected, // is it selected or not
                     logScale: logScaleValue.value
                 });
             }
