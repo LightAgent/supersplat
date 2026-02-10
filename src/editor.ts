@@ -228,6 +228,16 @@ const registerEditorEvents = (events: Events, editHistory: EditHistory, scene: S
         });
     });
 
+    events.on('select.visibleOnly', () => {
+        selectedSplats().forEach((splat) => {
+            if (splat.visible) {
+                events.fire('edit.add', new SelectAllOp(splat));
+            } else {
+                events.fire('edit.add', new SelectNoneOp(splat));
+            }
+        });
+    });
+
     events.on('select.pred', (op, pred: (i: number) => boolean) => {
         selectedSplats().forEach((splat) => {
             console.log("In selected pred number of selected splats: " + selectedSplats().length.toString());

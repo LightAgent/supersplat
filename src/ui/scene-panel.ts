@@ -133,6 +133,7 @@ class ScenePanel extends Container {
         const segmentationInputs: BooleanInput[] = [];
 
         const segmentationLabels = [
+            'Outer Layer',
             'Csf',
             'Fat',
             'Gli',
@@ -145,6 +146,7 @@ class ScenePanel extends Container {
         ];
 
         const segmentationColors: { [key: string]: [number, number, number] } = {
+            'Outer Layer': [180, 180, 180],
             'Csf': [255, 255, 0],
             'Fat': [0, 255, 255],
             'Gli': [128, 0, 128],
@@ -155,7 +157,7 @@ class ScenePanel extends Container {
             'Skin': [0, 128, 255],
             'White': [0, 0, 255]
         };
-
+        var hidden = false;
         segmentationLabels.forEach((label, index) => {
             const row = new Container({
                 class: 'segmentation-option-row'
@@ -164,26 +166,72 @@ class ScenePanel extends Container {
             const input = new BooleanInput();
             segmentationInputs.push(input);
 
-            input.on('change', (value: boolean) => {
+            input.on('change', async (value: boolean) => {
                 const rgb = segmentationColors[label];
-                if (rgb) {
-                    events.fire('select.byRgb', value ? 'add' : 'remove', rgb, 0.5);
+                if (value) {
+                    // Unhide all first to start fresh
+                    if(hidden){
+                        // events.fire('select.all');
+                        events.fire('select.visibleOnly');
+                        hidden = false;
+                    }
+                    events.fire('select.unhide');
+                    
+                    // Select by color
+                    events.fire('select.byRgb', 'add', rgb, 0.4);
+                    
+                    // Now hide everything except the selection
+                    
+                    
+                    // Restore the color selection for visibility
+                    // events.fire('select.byRgb', 'add', rgb, 0.4);
+                } else {
+                    events.fire('select.byRgb', 'remove', rgb, 0.4);
+                    // Unhide all when unchecked
+                    // events.fire('select.unhide');
+                    // events.fire('select.none');
                 }
+                
             });
-
+            
             row.append(input);
-
+            
             row.append(new Label({
                 text: label,
                 flex: true,
                 height: 30
             }));
-
+            
             segmentationOptions.append(row);
         });
-
+        
         this.append(segmentationOptions);
+        
+        // Button to invert selection and hide
+        const hideUnselectedButton = new Container({
+            class: 'panel-header-button'
+        });
+        hideUnselectedButton.append(new Label({ text: 'Hide Unselected' }));
+        hideUnselectedButton.on('click', () => {
+            events.fire('select.invert');
+            events.fire('select.hide');
+            hidden = true;
+            // events.fire('select.none');
+        });
+        tooltips.register(hideUnselectedButton, 'Hide all unselected splats', 'top');
+        this.append(hideUnselectedButton);
 
+        // Button to select only visible splats
+        const selectVisibleButton = new Container({
+            class: 'panel-header-button'
+        });
+        selectVisibleButton.append(new Label({ text: 'Select Visible' }));
+        selectVisibleButton.on('click', () => {
+            events.fire('select.visibleOnly');
+        });
+        tooltips.register(selectVisibleButton, 'Select only visible splats', 'top');
+        this.append(selectVisibleButton);
+        
         
     }
 }
