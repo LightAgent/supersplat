@@ -132,18 +132,7 @@ class ScenePanel extends Container {
 
         const segmentationInputs: BooleanInput[] = [];
 
-        const segmentationLabels = [
-            'Outer Layer',
-            'Csf',
-            'Fat',
-            'Gli',
-            'Grey',
-            'Muscle + Skin',
-            'Mit',
-            'Skull',
-            'Skin',
-            'White'
-        ];
+        const selectedLabels: string[] = [];
 
         const segmentationColors: { [key: string]: [number, number, number] } = {
             'Outer Layer': [180, 180, 180],
@@ -157,8 +146,8 @@ class ScenePanel extends Container {
             'Skin': [0, 128, 255],
             'White': [0, 0, 255]
         };
-        var hidden = false;
-        segmentationLabels.forEach((label, index) => {
+
+        Object.keys(segmentationColors).forEach((label, index) => {
             const row = new Container({
                 class: 'segmentation-option-row'
             });
@@ -167,18 +156,16 @@ class ScenePanel extends Container {
             segmentationInputs.push(input);
 
             input.on('change', async (value: boolean) => {
-                const rgb = segmentationColors[label];
                 if (value) {
+                    selectedLabels.push(label);
                     // Unhide all first to start fresh
-                    if(hidden){
-                        // events.fire('select.all');
-                        events.fire('select.visibleOnly');
-                        hidden = false;
-                    }
-                    events.fire('select.unhide');
+                    // events.fire('select.all');
+                    // events.fire('select.visibleOnly');
+                    
+                    // events.fire('select.unhide');
                     
                     // Select by color
-                    events.fire('select.byRgb', 'add', rgb, 0.4);
+                    // events.fire('select.byRgb', 'add', rgb, 0.4);
                     
                     // Now hide everything except the selection
                     
@@ -186,12 +173,25 @@ class ScenePanel extends Container {
                     // Restore the color selection for visibility
                     // events.fire('select.byRgb', 'add', rgb, 0.4);
                 } else {
-                    events.fire('select.byRgb', 'remove', rgb, 0.4);
+                    // events.fire('select.byRgb', 'remove', rgb, 0.4);
+                    selectedLabels.splice(selectedLabels.indexOf(label),1);
                     // Unhide all when unchecked
                     // events.fire('select.unhide');
                     // events.fire('select.none');
                 }
-                
+                if (selectedLabels.length != 0){
+                    console.log(selectedLabels);
+                    events.fire('select.unhide');
+                    selectedLabels.forEach((label)=>{
+                        events.fire('select.byRgb', 'add', segmentationColors[label], 0.4);
+                    })
+                    events.fire('select.invert');
+                    events.fire('select.hide');
+                }else{
+                    console.log("Unhiding everything")
+                    events.fire('select.unhide');
+                    events.fire('select.none');
+                }
             });
             
             row.append(input);
@@ -215,7 +215,6 @@ class ScenePanel extends Container {
         hideUnselectedButton.on('click', () => {
             events.fire('select.invert');
             events.fire('select.hide');
-            hidden = true;
             // events.fire('select.none');
         });
         tooltips.register(hideUnselectedButton, 'Hide all unselected splats', 'top');
