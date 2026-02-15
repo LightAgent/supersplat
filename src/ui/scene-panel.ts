@@ -157,6 +157,7 @@ class ScenePanel extends Container {
 
             input.on('change', async (value: boolean) => {
                 if (value) {
+                    // adding to the list of selected
                     selectedLabels.push(label);
                     // Unhide all first to start fresh
                     // events.fire('select.all');
@@ -174,19 +175,27 @@ class ScenePanel extends Container {
                     // events.fire('select.byRgb', 'add', rgb, 0.4);
                 } else {
                     // events.fire('select.byRgb', 'remove', rgb, 0.4);
-                    selectedLabels.splice(selectedLabels.indexOf(label),1);
+                    // selectedLabels.splice(selectedLabels.indexOf(label),1);
+                    // safer approach to remove from the dictionary
+                    const index = selectedLabels.indexOf(label);
+
+                    if (index > -1) {
+                        selectedLabels.splice(index, 1);
+                    }
                     // Unhide all when unchecked
                     // events.fire('select.unhide');
                     // events.fire('select.none');
                 }
                 if (selectedLabels.length != 0){
                     console.log(selectedLabels);
-                    events.fire('select.unhide');
-                    selectedLabels.forEach((label)=>{
-                        events.fire('select.byRgb', 'add', segmentationColors[label], 0.4);
+                    events.fire('select.unhide'); // unhides all to start fresh :: all unlocked
+                    // need to unselect the ones that got unhidden but were selected to completely start fresh : so unselect these 001
+                    events.fire('select.clearPure');
+                    selectedLabels.forEach((label)=>{ // then selects each of the selected colors
+                        events.fire('select.byRgb', 'add', segmentationColors[label], 0.4); // thr = 0.4
                     })
-                    events.fire('select.invert');
-                    events.fire('select.hide');
+                    events.fire('select.invert'); // invert selection
+                    events.fire('select.hide'); // hide the selected
                 }else{
                     console.log("Unhiding everything")
                     events.fire('select.unhide');

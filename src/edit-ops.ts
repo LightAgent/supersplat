@@ -135,15 +135,15 @@ class SelectOp extends StateOp {
 
     constructor(splat: Splat, op: 'add'|'remove'|'set', filter: (i: number) => boolean) {
         const filterFunc = {
-            add: (state: number, index: number) => (state === 0) && filter(index),
-            remove: (state: number, index: number) => (state === State.selected) && filter(index),
-            set: (state: number, index: number) => (state === State.selected) !== filter(index)
+            add: (state: number, index: number) => (state === 0) && filter(index), // unselected
+            remove: (state: number, index: number) => (state === State.selected) && filter(index), // ONLY selected (no other flags)
+            set: (state: number, index: number) => (state === State.selected) !== filter(index) // 
         };
 
         const doIt = {
-            add: (state: number) => state | State.selected,
-            remove: (state: number) => state & (~State.selected),
-            set: (state: number) => state ^ State.selected
+            add: (state: number) => state | State.selected, // select the unselected
+            remove: (state: number) => state & (~State.selected), // unselect the selected
+            set: (state: number) => state ^ State.selected // 
         };
 
         const undoIt = {
@@ -161,9 +161,9 @@ class HideSelectionOp extends StateOp {
 
     constructor(splat: Splat) {
         super(splat,
-            state => state === State.selected,
-            state => state | State.locked,
-            state => state & (~State.locked),
+            state => state === State.selected, // splats whose state is 001 ONLY SELECTED
+            state => state | State.locked, // make them locked/hidden too state = 011 SELECTED and HIDDEN
+            state => state & (~State.locked), // undo
             State.locked
         );
     }
@@ -174,8 +174,9 @@ class UnhideAllOp extends StateOp {
 
     constructor(splat: Splat) {
         super(splat,
-            state => (state & (State.locked | State.deleted)) === State.locked,
-            state => state & (~State.locked),
+            state => (state & (State.locked | State.deleted)) === State.locked, // if state & 110 === 010 
+            //? aka NOT deleted AND LOCKED (selected or not)
+            state => state & (~State.locked), // make them UNLOCKED :: so they are now 00x UNHIDDEN but may be selected
             state => state | State.locked,
             State.locked
         );
