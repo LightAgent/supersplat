@@ -136,7 +136,7 @@ class ScenePanel extends Container {
         const selectedLabels: string[] = [];
         //const segmentationColors = segColors as Record<string, [number, number, number]>;
         
-        // note that the any is somewhat risky/dangerous
+        //! note that the any is somewhat risky/dangerous
         const segmentationColors: { [key: string]: [number, number, number] } = segColors as any;
         
         
