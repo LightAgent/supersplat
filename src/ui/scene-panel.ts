@@ -7,6 +7,7 @@ import sceneImportSvg from './svg/import.svg';
 import sceneNewSvg from './svg/new.svg';
 import { Tooltips } from './tooltips';
 import { Transform } from './transform';
+import segColors from '../temp.json';
 
 const createSvg = (svgString: string) => {
     const decodedStr = decodeURIComponent(svgString.substring('data:image/svg+xml,'.length));
@@ -133,19 +134,28 @@ class ScenePanel extends Container {
         const segmentationInputs: BooleanInput[] = [];
 
         const selectedLabels: string[] = [];
+        //const segmentationColors = segColors as Record<string, [number, number, number]>;
+        
+        // note that the any is somewhat risky/dangerous
+        const segmentationColors: { [key: string]: [number, number, number] } = segColors as any;
+        
+        
+        // const segmentationColors = segColors as Record<string, [number, number, number]>;
+        // const segmentationColors: { [key: string]: [number, number, number] } = segColors;
 
-        const segmentationColors: { [key: string]: [number, number, number] } = {
-            'Outer Layer': [180, 180, 180],
-            'Csf': [255, 255, 0],
-            'Fat': [0, 255, 255],
-            'Gli': [128, 0, 128],
-            'Grey': [128, 128, 128],
-            'Muscle + Skin': [255, 0, 255],
-            'Mit': [255, 128, 0],
-            'Skull': [255, 0, 0],
-            'Skin': [0, 128, 255],
-            'White': [0, 0, 255]
-        };
+        // const segmentationColors: { [key: string]: [number, number, number] } = {
+        //     'Outer Layer': [180, 180, 180],
+        //     'Csf': [255, 255, 0],
+        //     'Fat': [0, 255, 255],
+        //     'Gli': [128, 0, 128],
+        //     'Grey': [128, 128, 128],
+        //     'Muscle + Skin': [255, 0, 255],
+        //     'Mit': [255, 128, 0],
+        //     'Skull': [255, 0, 0],
+        //     'Skin': [0, 128, 255],
+        //     'White': [0, 0, 255]
+        // };
+
 
         Object.keys(segmentationColors).forEach((label, index) => {
             const row = new Container({
